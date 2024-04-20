@@ -26,6 +26,8 @@ void main() {
 
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
+  final screenSize = Size(390, 844);
+
   group('订单部分：', () {
 
     Constant.isDriverTest = true;
@@ -34,7 +36,67 @@ void main() {
       debugPrint('< Success');
     });
 
-    testWidgets('订单页测试',(WidgetTester tester) async {
+    // testWidgets('订单页测试',(WidgetTester tester) async {
+    //   runApp(MyApp(home: const OrderPage()));
+    //   await tester.pumpAndSettle();
+
+    //   expect(find.text('接单'), findsAtLeastNWidgets(3));
+    //   expect(find.text('拒单'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+    //   await tester.tap(find.text('待配送'));
+    //   await tester.pumpAndSettle();
+
+    //   // Wait for 3 seconds, specifying the completed value type (void)
+    //   // await Future.delayed(const Duration(seconds: 3), () {});
+
+    //   expect(find.text('开始配送'), findsAtLeastNWidgets(3));
+    //   expect(find.text('拒单'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+    //   await tester.tap(find.text('待完成'));
+    //   await tester.pumpAndSettle();
+      
+    //   expect(find.text('完成'), findsAtLeastNWidgets(3));
+    //   expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+      
+    //   // Wait for 3 seconds, specifying the completed value type (void)
+    //   // await Future.delayed(const Duration(seconds: 3), () {});
+
+    //   await tester.tap(find.text('已完成'));
+    //   await tester.pumpAndSettle();
+      
+    //   // Wait for 3 seconds, specifying the completed value type (void)
+    //   // await Future.delayed(const Duration(seconds: 3), () {});
+
+    //   expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+    //   await tester.tap(find.text('已取消'));
+    //   await tester.pumpAndSettle();
+      
+    //   // Wait for 3 seconds, specifying the completed value type (void)
+    //   // await Future.delayed(const Duration(seconds: 3), () {});
+
+    //   expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+    //   await tester.tap(find.text('新订单'));
+    //   await tester.pumpAndSettle();
+      
+    //   // Wait for 3 seconds, specifying the completed value type (void)
+    //   // await Future.delayed(const Duration(seconds: 3), () {});
+
+    //   expect(find.text('接单'), findsAtLeastNWidgets(3));
+    //   expect(find.text('拒单'), findsAtLeastNWidgets(3));
+    //   expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+    //   await tester.dragFrom(const Offset(250, 400), const Offset(0, -500));
+    //   await tester.pumpAndSettle();
+    // });
+
+    testWidgets('订单页测试，带滚动',(WidgetTester tester) async {
       runApp(MyApp(home: const OrderPage()));
       await tester.pumpAndSettle();
 
@@ -42,15 +104,31 @@ void main() {
       expect(find.text('拒单'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
 
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
+
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
+      await tester.pumpAndSettle();
+      
       await tester.tap(find.text('待配送'));
       await tester.pumpAndSettle();
 
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-
       expect(find.text('开始配送'), findsAtLeastNWidgets(3));
       expect(find.text('拒单'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
+
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
+      await tester.pumpAndSettle();
+      
 
       await tester.tap(find.text('待完成'));
       await tester.pumpAndSettle();
@@ -61,22 +139,44 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
 
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
+      await tester.pumpAndSettle();
+      
       await tester.tap(find.text('已完成'));
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
+
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
+      await tester.pumpAndSettle();
+      
 
       await tester.tap(find.text('已取消'));
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
 
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
+      await tester.pumpAndSettle();
+      
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
 
@@ -85,12 +185,15 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-
       expect(find.text('接单'), findsAtLeastNWidgets(3));
       expect(find.text('拒单'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
+      await tester.dragFrom(const Offset(250, 350), const Offset(0, 500));
 
-      await tester.dragFrom(const Offset(250, 400), const Offset(0, -500));
+      await tester.pumpAndSettle();
+      
+      await tester.dragFrom(const Offset(250, 450), const Offset(0, -500));
+
       await tester.pumpAndSettle();
     });
 
