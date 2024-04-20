@@ -46,7 +46,7 @@ void main() {
       await tester.pumpAndSettle();
 
       // Wait for 3 seconds, specifying the completed value type (void)
-      await Future.delayed(const Duration(seconds: 3), () {});
+      // await Future.delayed(const Duration(seconds: 3), () {});
 
       expect(find.text('开始配送'), findsAtLeastNWidgets(3));
       expect(find.text('拒单'), findsAtLeastNWidgets(3));
@@ -60,13 +60,13 @@ void main() {
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
       
       // Wait for 3 seconds, specifying the completed value type (void)
-      await Future.delayed(const Duration(seconds: 3), () {});
+      // await Future.delayed(const Duration(seconds: 3), () {});
 
       await tester.tap(find.text('已完成'));
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
-      await Future.delayed(const Duration(seconds: 3), () {});
+      // await Future.delayed(const Duration(seconds: 3), () {});
 
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
@@ -75,7 +75,7 @@ void main() {
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
-      await Future.delayed(const Duration(seconds: 3), () {});
+      // await Future.delayed(const Duration(seconds: 3), () {});
 
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(3));
       expect(find.text('联系客户'), findsAtLeastNWidgets(3));
@@ -84,7 +84,7 @@ void main() {
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
-      await Future.delayed(const Duration(seconds: 3), () {});
+      // await Future.delayed(const Duration(seconds: 3), () {});
 
       expect(find.text('接单'), findsAtLeastNWidgets(3));
       expect(find.text('拒单'), findsAtLeastNWidgets(3));
