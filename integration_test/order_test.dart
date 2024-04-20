@@ -4,7 +4,6 @@ import 'package:flutter_deer/order/page/order_page.dart';
 import 'package:flutter_deer/res/constant.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import '';
 import '../test_driver/tools/test_utils.dart';
 
 ///  flutter drive --driver integration_test/integration_test.dart --target integration_test/order_test.dart
@@ -356,7 +355,8 @@ void main() {
     // In Progress
     testWidgets('订单页测试，带本页多重滚动，外加客制化屏幕大小(暂定1440 * 800)，再带个截图',(WidgetTester tester) async {
       runApp(MyApp(home: const OrderPage()));
-      tester.binding.window.physicalSizeTestValue = const Size(1440, 800);
+      tester.binding.window.physicalSizeTestValue = const Size(2880, 1600);
+      // tester.binding.window.physicalSizeTestValue = const Size(780, 1688);
       await tester.pumpAndSettle();
 
       expect(find.text('接单'), findsAtLeastNWidgets(1));
@@ -501,9 +501,11 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester) async {
 
           print('Checkpoint W 1');
 
-          await tester.pump(); // Wait for UI to rebuild after scroll
+          await delayed();
           
           print('Checkpoint W 2');
+
+          await tester.pump(); // Wait for UI to rebuild after scroll
 
           await delayed();
           
