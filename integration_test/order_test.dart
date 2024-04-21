@@ -1,3 +1,8 @@
+import 'dart:convert';
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_deer/main.dart';
 import 'package:flutter_deer/order/page/order_page.dart';
@@ -5,6 +10,8 @@ import 'package:flutter_deer/res/constant.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 import '../test_driver/tools/test_utils.dart';
+import 'package:screenshot/screenshot.dart';
+import 'package:flutter_deer/home/splash_page.dart';
 
 ///  flutter drive --driver integration_test/integration_test.dart --target integration_test/order_test.dart
 
@@ -352,9 +359,18 @@ void main() {
     //   await tester.pumpAndSettle();
     // });
 
-    // In Progress
+    // Completed
     testWidgets('订单页测试，带本页多重滚动，外加客制化屏幕大小(暂定1440 * 800)，再带个截图',(WidgetTester tester) async {
-      runApp(MyApp(home: const OrderPage()));
+
+      final ScreenshotController screenshotController = ScreenshotController();
+      
+      runApp(MyApp(home: 
+        Screenshot(
+          controller: screenshotController,
+          child: const OrderPage()
+        )
+      ));
+      // 桌面端可以在iPad上测试，但是在iPhone上不行
       tester.binding.window.physicalSizeTestValue = const Size(2880, 1600);
       // tester.binding.window.physicalSizeTestValue = const Size(780, 1688);
       await tester.pumpAndSettle();
@@ -363,7 +379,7 @@ void main() {
       expect(find.text('拒单'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester);
+      await scrollEachItem(tester, screenshotController);
 
       await tester.pumpAndSettle();
       
@@ -376,7 +392,7 @@ void main() {
       expect(find.text('拒单'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester);
+      await scrollEachItem(tester, screenshotController);
 
       await tester.pumpAndSettle();
 
@@ -389,7 +405,7 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester);
+      await scrollEachItem(tester, screenshotController);
 
       await tester.pumpAndSettle();
       
@@ -401,7 +417,7 @@ void main() {
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester);
+      await scrollEachItem(tester, screenshotController);
 
       await tester.pumpAndSettle();
 
@@ -410,7 +426,7 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester);
+      await scrollEachItem(tester, screenshotController);
 
       await tester.pumpAndSettle();
       
@@ -429,11 +445,96 @@ void main() {
       await tester.pumpAndSettle();
     });
 
+    // Inprogress
+    testWidgets('订单页测试，多重滚动，客制化屏幕大小，截图，然后从首页开始',(WidgetTester tester) async {
+
+      final ScreenshotController screenshotController = ScreenshotController();
+      
+      runApp(MyApp(home: 
+        Screenshot(
+          controller: screenshotController,
+          child: const SplashPage()
+        )
+      ));
+      // 桌面端可以在iPad上测试，但是在iPhone上不行
+      tester.binding.window.physicalSizeTestValue = const Size(2880, 1600);
+      // tester.binding.window.physicalSizeTestValue = const Size(780, 1688);
+      await tester.pumpAndSettle();
+
+      expect(find.text('接单'), findsAtLeastNWidgets(1));
+      expect(find.text('拒单'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+
+      await scrollEachItem(tester, screenshotController);
+
+      await tester.pumpAndSettle();
+      
+      await tester.tap(find.text('待配送'));
+      await tester.pumpAndSettle();
+
+      // Wait for 3 seconds, specifying the completed value type (void)
+      // await Future.delayed(const Duration(seconds: 3), () {});
+      expect(find.text('开始配送'), findsAtLeastNWidgets(1));
+      expect(find.text('拒单'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+
+      await scrollEachItem(tester, screenshotController);
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('待完成'));
+      await tester.pumpAndSettle();
+      
+      expect(find.text('完成'), findsAtLeastNWidgets(1));
+      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+      
+      // Wait for 3 seconds, specifying the completed value type (void)
+      // await Future.delayed(const Duration(seconds: 3), () {});
+      await scrollEachItem(tester, screenshotController);
+
+      await tester.pumpAndSettle();
+      
+      await tester.tap(find.text('已完成'));
+      await tester.pumpAndSettle();
+      
+      // Wait for 3 seconds, specifying the completed value type (void)
+      // await Future.delayed(const Duration(seconds: 3), () {});
+      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+
+      await scrollEachItem(tester, screenshotController);
+
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('已取消'));
+      await tester.pumpAndSettle();
+      
+      // Wait for 3 seconds, specifying the completed value type (void)
+      // await Future.delayed(const Duration(seconds: 3), () {});
+      await scrollEachItem(tester, screenshotController);
+
+      await tester.pumpAndSettle();
+      
+      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+
+      await tester.tap(find.text('新订单'));
+      await tester.pumpAndSettle();
+      
+      // Wait for 3 seconds, specifying the completed value type (void)
+      // await Future.delayed(const Duration(seconds: 3), () {});
+      expect(find.text('接单'), findsAtLeastNWidgets(1));
+      expect(find.text('拒单'), findsAtLeastNWidgets(1));
+      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+
+      await tester.pumpAndSettle();
+    });
 
   });
 }
 
-Future<List<Widget>> scrollEachItem(WidgetTester tester) async {
+Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController screenshotController) async {
   print('scrollEachItem is triggered');
   // First approach: get a single scrollable widget and drag it
   final scrollableElements = <Widget>[];
@@ -511,11 +612,38 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester) async {
           
           print('Checkpoint W 3');
 
-          print('Dragging ${i} completed, proceed to next iteration.');
+          print('Dragging ${i} completed, proceed to screenshot taking.');
+
+          screenshotController
+              .capture(delay: const Duration(milliseconds: 10))
+              .then((capturedImage) async {
+            if (capturedImage != null) {
+              final base64Value = uint8ListToBase64(capturedImage);
+              await Dio().post('https://testserver.pretjob.com/api/designcomp/figma/screenshot/base64', data: {
+                'items': [
+                  {
+                    'name': 'scrollable_${i}.png',
+                    'base64': 'data:image/png;base64,' + base64Value,
+                  }
+                ]
+              })
+              .then((res) => {
+                print('Screenshot uploaded successfully.')
+              });
+            }
+            // final File file = File('screenshots/scrollable_${i}.png');
+            // file.writeAsBytesSync(capturedImage!);
+          }).catchError((onError) {
+            print(onError);
+          });
+
+          print('Checkpoint W 4');
+
+          print('Screenshot completed, proceed to next iteration.');
 
           i++;
           
-          print('Checkpoint W 3');
+          print('Checkpoint W 5');
         }
       }
       catch(err) {
@@ -526,4 +654,10 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester) async {
 
     return scrollableElements;
   }
+}
+
+String uint8ListToBase64(Uint8List uint8List) {
+  // Encode the uint8List to Base64
+  String base64String = base64Encode(uint8List);
+  return base64String;
 }
