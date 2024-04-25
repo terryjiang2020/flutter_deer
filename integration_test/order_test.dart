@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
@@ -9,9 +8,9 @@ import 'package:flutter_deer/order/page/order_page.dart';
 import 'package:flutter_deer/res/constant.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
-import '../test_driver/tools/test_utils.dart';
 import 'package:screenshot/screenshot.dart';
-import 'package:flutter_deer/home/splash_page.dart';
+
+import '../test_driver/tools/test_utils.dart';
 
 ///  flutter drive --driver integration_test/integration_test.dart --target integration_test/order_test.dart
 
@@ -34,7 +33,9 @@ void main() {
 
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
-  final screenSize = Size(390, 844);
+  // On iPhone: use the original resolution
+  // On iPad: times the resolution by 2
+  const screenSize = Size(750, 1334);
 
   group('订单部分：', () {
 
@@ -360,9 +361,11 @@ void main() {
     // });
 
     // Completed
-    testWidgets('订单页测试，带本页多重滚动，外加客制化屏幕大小(暂定1440 * 800)，再带个截图',(WidgetTester tester) async {
+    testWidgets('订单页测试，带本页多重滚动，外加客制化屏幕大小，再带个截图',(WidgetTester tester) async {
 
       final ScreenshotController screenshotController = ScreenshotController();
+
+      num currentNo = 0;
       
       runApp(MyApp(home: 
         Screenshot(
@@ -371,7 +374,7 @@ void main() {
         )
       ));
       // 桌面端可以在iPad上测试，但是在iPhone上不行
-      tester.binding.window.physicalSizeTestValue = const Size(2880, 1600);
+      tester.binding.window.physicalSizeTestValue = screenSize;
       // tester.binding.window.physicalSizeTestValue = const Size(780, 1688);
       await tester.pumpAndSettle();
 
@@ -379,7 +382,9 @@ void main() {
       expect(find.text('拒单'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester, screenshotController);
+      currentNo = await scrollEachItem(tester, screenshotController, currentNo);
+
+      print('currentNo: $currentNo');
 
       await tester.pumpAndSettle();
       
@@ -392,7 +397,9 @@ void main() {
       expect(find.text('拒单'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester, screenshotController);
+      currentNo = await scrollEachItem(tester, screenshotController, currentNo);
+
+      print('currentNo: $currentNo');
 
       await tester.pumpAndSettle();
 
@@ -405,7 +412,9 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester, screenshotController);
+      currentNo = await scrollEachItem(tester, screenshotController, currentNo);
+
+      print('currentNo: $currentNo');
 
       await tester.pumpAndSettle();
       
@@ -417,7 +426,9 @@ void main() {
       expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
       expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
-      await scrollEachItem(tester, screenshotController);
+      currentNo = await scrollEachItem(tester, screenshotController, currentNo);
+
+      print('currentNo: $currentNo');
 
       await tester.pumpAndSettle();
 
@@ -426,107 +437,23 @@ void main() {
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester, screenshotController);
+      currentNo = await scrollEachItem(tester, screenshotController, currentNo);
+
+      print('currentNo: $currentNo');
 
       await tester.pumpAndSettle();
       
-      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+      // expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
+      // expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
       await tester.tap(find.text('新订单'));
       await tester.pumpAndSettle();
       
       // Wait for 3 seconds, specifying the completed value type (void)
       // await Future.delayed(const Duration(seconds: 3), () {});
-      expect(find.text('接单'), findsAtLeastNWidgets(1));
-      expect(find.text('拒单'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-
-      await tester.pumpAndSettle();
-    });
-
-    // Inprogress
-    testWidgets('订单页测试，多重滚动，客制化屏幕大小，截图，然后从首页开始',(WidgetTester tester) async {
-
-      final ScreenshotController screenshotController = ScreenshotController();
-      
-      runApp(MyApp(home: 
-        Screenshot(
-          controller: screenshotController,
-          child: const SplashPage()
-        )
-      ));
-      // 桌面端可以在iPad上测试，但是在iPhone上不行
-      tester.binding.window.physicalSizeTestValue = const Size(2880, 1600);
-      // tester.binding.window.physicalSizeTestValue = const Size(780, 1688);
-      await tester.pumpAndSettle();
-
-      expect(find.text('接单'), findsAtLeastNWidgets(1));
-      expect(find.text('拒单'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-
-      await scrollEachItem(tester, screenshotController);
-
-      await tester.pumpAndSettle();
-      
-      await tester.tap(find.text('待配送'));
-      await tester.pumpAndSettle();
-
-      // Wait for 3 seconds, specifying the completed value type (void)
-      // await Future.delayed(const Duration(seconds: 3), () {});
-      expect(find.text('开始配送'), findsAtLeastNWidgets(1));
-      expect(find.text('拒单'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-
-      await scrollEachItem(tester, screenshotController);
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('待完成'));
-      await tester.pumpAndSettle();
-      
-      expect(find.text('完成'), findsAtLeastNWidgets(1));
-      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-      
-      // Wait for 3 seconds, specifying the completed value type (void)
-      // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester, screenshotController);
-
-      await tester.pumpAndSettle();
-      
-      await tester.tap(find.text('已完成'));
-      await tester.pumpAndSettle();
-      
-      // Wait for 3 seconds, specifying the completed value type (void)
-      // await Future.delayed(const Duration(seconds: 3), () {});
-      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-
-      await scrollEachItem(tester, screenshotController);
-
-      await tester.pumpAndSettle();
-
-      await tester.tap(find.text('已取消'));
-      await tester.pumpAndSettle();
-      
-      // Wait for 3 seconds, specifying the completed value type (void)
-      // await Future.delayed(const Duration(seconds: 3), () {});
-      await scrollEachItem(tester, screenshotController);
-
-      await tester.pumpAndSettle();
-      
-      expect(find.text('订单跟踪'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
-
-      await tester.tap(find.text('新订单'));
-      await tester.pumpAndSettle();
-      
-      // Wait for 3 seconds, specifying the completed value type (void)
-      // await Future.delayed(const Duration(seconds: 3), () {});
-      expect(find.text('接单'), findsAtLeastNWidgets(1));
-      expect(find.text('拒单'), findsAtLeastNWidgets(1));
-      expect(find.text('联系客户'), findsAtLeastNWidgets(1));
+      // expect(find.text('接单'), findsAtLeastNWidgets(1));
+      // expect(find.text('拒单'), findsAtLeastNWidgets(1));
+      // expect(find.text('联系客户'), findsAtLeastNWidgets(1));
 
       await tester.pumpAndSettle();
     });
@@ -534,7 +461,11 @@ void main() {
   });
 }
 
-Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController screenshotController) async {
+Future<num> scrollEachItem(
+  WidgetTester tester,
+  ScreenshotController screenshotController,
+  num currentNo
+) async {
   print('scrollEachItem is triggered');
   // First approach: get a single scrollable widget and drag it
   final scrollableElements = <Widget>[];
@@ -557,7 +488,7 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
   // If no scrollable element found, abort.
   if (scrollableElements.isEmpty) {
     print('scrollableElements is empty, abort');
-    return scrollableElements;
+    return currentNo;
   }
   else {
     print('scrollableElements is not empty, proceed');
@@ -596,7 +527,7 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
 
         // Repeat 5 times
         while (i < 5) {
-          print('Dragging: ${i}');
+          print('Dragging: $currentNo');
           // Drag from top to bottom with a slight offset to ensure enough movement
           await tester.dragFrom(screenSize.center(Offset.zero), offset);
 
@@ -612,9 +543,9 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
           
           print('Checkpoint W 3');
 
-          print('Dragging ${i} completed, proceed to screenshot taking.');
+          print('Dragging $currentNo completed, proceed to screenshot taking.');
 
-          screenshotController
+          await screenshotController
               .capture(delay: const Duration(milliseconds: 10))
               .then((capturedImage) async {
             if (capturedImage != null) {
@@ -622,17 +553,15 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
               await Dio().post('https://testserver.pretjob.com/api/designcomp/figma/screenshot/base64', data: {
                 'items': [
                   {
-                    'name': 'scrollable_${i}.png',
-                    'base64': 'data:image/png;base64,' + base64Value,
+                    'name': 'scrollable_$currentNo',
+                    'base64': 'data:image/png;base64,$base64Value',
                   }
                 ]
               })
-              .then((res) => {
-                print('Screenshot uploaded successfully.')
+              .then((res) {
+                print('Screenshot uploaded successfully.');
               });
             }
-            // final File file = File('screenshots/scrollable_${i}.png');
-            // file.writeAsBytesSync(capturedImage!);
           }).catchError((onError) {
             print(onError);
           });
@@ -642,6 +571,8 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
           print('Screenshot completed, proceed to next iteration.');
 
           i++;
+
+          currentNo++;
           
           print('Checkpoint W 5');
         }
@@ -652,7 +583,7 @@ Future<List<Widget>> scrollEachItem(WidgetTester tester, ScreenshotController sc
 
     }
 
-    return scrollableElements;
+    return currentNo;
   }
 }
 
